@@ -1,0 +1,25 @@
+.container {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebarL content sidebarR"
+    "footer footer footer";
+  grid-template-columns: 20% 1fr 20%;
+  grid-template-rows: 8% 1fr 8%;
+  height: 100vh;
+}
+
+.leftSidebar {
+  grid-area: sidebarL;
+  background-color: yellow;
+}
+
+.content {
+  grid-area: content;
+  background-color: green;
+}
+
+.rightSidebar {
+  grid-area: sidebarR;
+  background-color: yellow;
+}
