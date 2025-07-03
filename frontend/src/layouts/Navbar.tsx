@@ -1,7 +1,21 @@
 import { BsSearch } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { IoMdHome, IoMdPerson } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logout, reset } from "../slices/authSlice";
 
 const Navbar = () => {
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+
+  const dispath = useDispatch();
+  const handleLogout = () => {
+    dispath(logout());
+    dispath(reset());
+
+    navigate("/login");
+  };
   return (
     <nav className="flex justify-between bg-black text-white shadow-xl">
       <Link className="font-bold text-xl m-3" to="/">
@@ -19,12 +33,35 @@ const Navbar = () => {
       </form>
 
       <ul className="flex gap-3 items-center m-3">
-        <li>
-          <Link to="/login"> Login</Link>
-        </li>
-        <li>
-          <Link to="/register">Register</Link>
-        </li>
+        {auth ? (
+          <>
+            <li className="text-[25px]">
+              <Link to="/">
+                <IoMdHome />
+              </Link>
+            </li>
+            <li className="text-[25px]">
+              <Link to="/profile">
+                <IoMdPerson />
+              </Link>
+            </li>
+            <li>
+              <Link onClick={handleLogout} to="/login">
+                {" "}
+                Sair
+              </Link>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <Link to="/login"> Login</Link>
+            </li>
+            <li>
+              <Link to="/register">Register</Link>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

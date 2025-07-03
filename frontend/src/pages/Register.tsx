@@ -1,9 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 
-import { register, reset } from "../slices/AuthSlice";
-import { useSelector, useDispatch } from "react-redux";
-import ErrorMessage from "../components/ErrorMessage";
+import { register, reset } from "../slices/authSlice";
+import Message from "../components/Message";
 import AppButton from "../components/AppButton";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
 
 const Register = () => {
   const [name, setName] = useState<string>("");
@@ -11,9 +11,9 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const dispath = useDispatch();
+  const dispath = useAppDispatch();
 
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -73,7 +73,7 @@ const Register = () => {
             label={!loading ? "Cadastrar" : "Aguarde..."}
             buttonType={!loading ? "default" : "loading"}
           />
-          {error && <ErrorMessage msg={error} />}
+          {error && <Message msg={error} typeMessage="error" />}
         </form>
         <hr className="border-gray-600 m-4 mx-0 text-center w-full" />
 
