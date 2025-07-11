@@ -47,7 +47,7 @@ export const updateProfile = createAsyncThunk<
   AuthUser,
   UpdateProfileData,
   { state: RootState; rejectValue: string }
->("user/update", async (updateData, thunkAPI) => {
+>("user/update", async (updateData: UpdateProfileData, thunkAPI) => {
   const token = thunkAPI.getState().auth.user?.token;
   if (!token) {
     return thunkAPI.rejectWithValue("Token não encontrado");
@@ -58,6 +58,22 @@ export const updateProfile = createAsyncThunk<
   }
   return data;
 });
+
+export const getUserById = createAsyncThunk<
+  AuthUser,
+  string,
+  { state: RootState; rejectValue: string }
+>("user/getById", async (id, thunkAPI) => {
+  if (!id) {
+    return thunkAPI.rejectWithValue("ID do usuário não fornecido");
+  }
+  const data = await userService.getUserById(id);
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+  return data;
+});
+
 const initialState: AuthState = {
   user: null,
   error: null,
@@ -99,6 +115,16 @@ export const userSlice = createSlice({
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Erro desconhecido";
+      })
+      .addCase(getUserById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.user = action.payload;
       });
   },
 });

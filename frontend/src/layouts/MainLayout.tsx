@@ -4,7 +4,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col h-screen w-screen max-w-full">
       <Navbar />
-      <div className="flex-1 flex items-center justify-center bg-neutral-900">
+      <div className="flex-1 flex justify-center bg-neutral-900">
         {children}
       </div>
       <Footer />

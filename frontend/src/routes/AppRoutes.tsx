@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../hooks/useAuth";
 import EditProfile from "../pages/EditProfile";
+import Profile from "../pages/Profile";
 const AppRoutes = () => {
   const { auth } = useAuth();
   return (
@@ -24,6 +25,10 @@ const AppRoutes = () => {
             element={auth ? <Navigate to="/" /> : <Register />}
           />
           <Route path="/profile" element={<EditProfile />} />
+          <Route
+            path="/users/:id"
+            element={auth ? <Profile /> : <Navigate to="/login" />}
+          />
         </Routes>
       </MainLayout>
     </BrowserRouter>

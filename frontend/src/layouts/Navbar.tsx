@@ -2,14 +2,17 @@ import { BsSearch } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { IoMdHome, IoMdPerson } from "react-icons/io";
-import { useDispatch } from "react-redux";
+
 import { logout, reset } from "../slices/authSlice";
+import { MdPhotoCamera } from "react-icons/md";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
 
 const Navbar = () => {
   const { auth } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
+  const dispath = useAppDispatch();
 
-  const dispath = useDispatch();
   const handleLogout = () => {
     dispath(logout());
     dispath(reset());
@@ -38,6 +41,11 @@ const Navbar = () => {
             <li className="text-[25px]">
               <Link to="/">
                 <IoMdHome />
+              </Link>
+            </li>
+            <li className="text-[25px]">
+              <Link to={`/users/${user?._id}`}>
+                <MdPhotoCamera />
               </Link>
             </li>
             <li className="text-[25px]">

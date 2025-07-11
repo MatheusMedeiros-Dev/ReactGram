@@ -105,7 +105,7 @@ const updatePhoto = async (req, res) => {
   await photo.save();
   return res
     .status(200)
-    .json(photo, { message: "Foto atualizada com sucesso." });
+    .json({ photo, message: "Foto atualizada com sucesso." });
 };
 
 const likePhoto = async (req, res) => {

@@ -18,9 +18,6 @@ const register = async (data: Data) => {
   try {
     const response = await fetch(api + "/users/register", config);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
     const res = await response.json();
     if (res) {
       localStorage.setItem("user", JSON.stringify(res));
@@ -37,9 +34,6 @@ const login = async (data: LoginData) => {
   try {
     const response = await fetch(api + "/users/login", config);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
     const res = await response.json();
 
     if (res._id) {
