@@ -5,7 +5,10 @@ import Register from "../pages/Register";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../hooks/useAuth";
 import EditProfile from "../pages/EditProfile";
-import Profile from "../pages/Profile";
+import PhotoDashboard from "../pages/PhotoDashboard";
+import PhotoViewer from "../pages/PhotoViewer";
+import EditPhoto from "../pages/EditPhoto";
+import Search from "../pages/Search";
 const AppRoutes = () => {
   const { auth } = useAuth();
   return (
@@ -24,10 +27,25 @@ const AppRoutes = () => {
             path="/register"
             element={auth ? <Navigate to="/" /> : <Register />}
           />
-          <Route path="/profile" element={<EditProfile />} />
+          <Route
+            path="/profile"
+            element={auth ? <EditProfile /> : <Navigate to="/login" />}
+          />
           <Route
             path="/users/:id"
-            element={auth ? <Profile /> : <Navigate to="/login" />}
+            element={auth ? <PhotoDashboard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/photos/:photoId"
+            element={auth ? <PhotoViewer /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/search"
+            element={auth ? <Search /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/photo/edit/:photoId"
+            element={auth ? <EditPhoto /> : <Navigate to="/login" />}
           />
         </Routes>
       </MainLayout>

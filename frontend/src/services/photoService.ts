@@ -1,19 +1,22 @@
+import type {
+  PhotoCommentFormData,
+  PublishPhotoFormData,
+  UpdatePhotoFormData,
+} from "../types/photo";
 import { api, requestConfig } from "../utils/config";
 
-type PhotoData = {
-  title: string;
-  image: string;
-};
-type UpdatePhotoData = {
-  title: string;
-};
-
-const publishPhoto = async (data: PhotoData, token: string) => {
+const publishPhoto = async (data: PublishPhotoFormData, token: string) => {
   const config = requestConfig("POST", data, token, true);
 
   try {
     const response = await fetch(api + "/photos/", config);
-    const res = response.json();
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
     return res;
   } catch (error) {
     return {
@@ -27,6 +30,12 @@ const getUserPhotos = async (id: string, token: string) => {
 
   try {
     const response = await fetch(api + "/photos/user/" + id, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
     const res = await response.json();
     return res;
   } catch (error) {
@@ -41,6 +50,12 @@ const deletePhoto = async (photoId: string, token: string) => {
 
   try {
     const response = await fetch(api + "/photos/" + photoId, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
     const res = await response.json();
     return res;
   } catch (error) {
@@ -51,13 +66,119 @@ const deletePhoto = async (photoId: string, token: string) => {
 };
 
 const updatePhoto = async (
-  data: UpdatePhotoData,
-  photoId: string,
+  data: UpdatePhotoFormData,
+  photoId: string | undefined,
   token: string
 ) => {
   const config = requestConfig("PUT", data, token);
   try {
     const response = await fetch(api + "/photos/" + photoId, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    return {
+      errors: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+};
+
+const getPhotoById = async (photoId: string, token: string) => {
+  const config = requestConfig("GET", null, token);
+
+  try {
+    const response = await fetch(api + "/photos/" + photoId, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    return {
+      errors: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+};
+
+const like = async (photoId: string, token: string) => {
+  const config = requestConfig("PUT", null, token);
+
+  try {
+    const response = await fetch(api + "/photos/like/" + photoId, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    return {
+      errors: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+};
+
+const photoComment = async (
+  data: PhotoCommentFormData,
+  photoId: string,
+  token: string
+) => {
+  const config = requestConfig("PUT", data, token);
+  try {
+    const response = await fetch(api + "/photos/comment/" + photoId, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    return {
+      errors: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+};
+const getAllPhotos = async (token: string) => {
+  const config = requestConfig("GET", null, token);
+  try {
+    const response = await fetch(api + "/photos", config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    return {
+      errors: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+};
+
+const searchPhotos = async (query: string, token: string) => {
+  const config = requestConfig("GET", null, token);
+  try {
+    const response = await fetch(api + "/photos/search?q=" + query, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
     const res = await response.json();
     return res;
   } catch (error) {
@@ -72,5 +193,10 @@ const photoService = {
   getUserPhotos,
   deletePhoto,
   updatePhoto,
+  getPhotoById,
+  like,
+  photoComment,
+  getAllPhotos,
+  searchPhotos,
 };
 export default photoService;

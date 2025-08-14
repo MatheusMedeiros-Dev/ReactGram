@@ -13,7 +13,7 @@ const insertPhoto = async (req, res) => {
     image,
     title,
     userId: user._id,
-    username: user.name,
+    userName: user.name,
   });
   if (!newPhoto) {
     return res
@@ -118,11 +118,17 @@ const likePhoto = async (req, res) => {
     return res.status(404).json({ errors: ["Foto não encontrada."] });
   }
 
-  if (photo.likes.includes(reqUser._id)) {
+  const hasAlreadyLiked = photo.likes.some(
+    (like) => like.userId.toString() === reqUser._id.toString()
+  );
+  if (hasAlreadyLiked) {
     return res.status(422).json({ errors: ["Você já curtiu essa foto."] });
   }
+  const photoLikesUid = {
+    userId: reqUser._id,
+  };
 
-  photo.likes.push(reqUser._id);
+  photo.likes.push(photoLikesUid);
   await photo.save();
   res
     .status(200)
@@ -145,8 +151,8 @@ const commentPhoto = async (req, res) => {
 
   const userComment = {
     comment,
-    username: user.name,
-    userImage: user.image,
+    userName: user.name,
+    userImage: user.profileImage,
     userId: user._id,
   };
 

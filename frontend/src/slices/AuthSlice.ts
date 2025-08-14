@@ -1,27 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../services/authService";
-
-type AuthUser = {
-  token: string;
-  _id: string;
-};
-
-type AuthState = {
-  user: AuthUser | null;
-  error: string | null;
-  success: boolean;
-  loading: boolean;
-};
-type RegisterData = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-type LoginData = {
-  email: string;
-  password: string;
-};
+import type {
+  AuthState,
+  AuthUser,
+  LoginFormData,
+  RegisterFormData,
+} from "../types/auth";
 
 const authUser: AuthUser | null = JSON.parse(
   localStorage.getItem("user") || "null"
@@ -29,9 +13,9 @@ const authUser: AuthUser | null = JSON.parse(
 
 export const register = createAsyncThunk<
   AuthUser,
-  RegisterData,
+  RegisterFormData,
   { rejectValue: string }
->("auth/register", async (registerData: RegisterData, thunkAPI) => {
+>("auth/register", async (registerData, thunkAPI) => {
   const data = await authService.register(registerData);
 
   if (data.errors) {
@@ -43,9 +27,9 @@ export const register = createAsyncThunk<
 
 export const login = createAsyncThunk<
   AuthUser,
-  LoginData,
+  LoginFormData,
   { rejectValue: string }
->("auth/login", async (loginData: LoginData, thunkAPI) => {
+>("auth/login", async (loginData, thunkAPI) => {
   const data = await authService.login(loginData);
 
   if (data.errors) {

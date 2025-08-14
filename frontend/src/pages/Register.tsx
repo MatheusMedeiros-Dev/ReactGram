@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
-
 import { register, reset } from "../slices/authSlice";
-import Message from "../components/Message";
 import AppButton from "../components/AppButton";
 import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
+import FormLayout from "../layouts/FormLayout";
+import InputField from "../components/InputField";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [name, setName] = useState<string>("");
@@ -11,9 +12,8 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const dispath = useAppDispatch();
-
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const { loading } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -24,67 +24,65 @@ const Register = () => {
       confirmPassword,
     };
 
-    dispath(register(user));
+    dispatch(register(user));
   };
   useEffect(() => {
-    dispath(reset());
-  }, [dispath]);
+    dispatch(reset());
+  }, [dispatch]);
   return (
-    <div className="bg-black rounded-xl text-white">
-      <h1 className="text-center text-[30px] my-6 font-bold">ReactGram</h1>
-      <div className="w-[400px] m-15 mt-0">
-        <h2 className="font-semibold text-center mb-4">
-          Cadastre-se para ver as fotos dos seus amigos.
-        </h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            className="bg-gray-600 indent-1 rounded-sm"
+    <FormLayout
+      title="ReactGram"
+      subTitle="Cadastre-se para ver as fotos dos seus amigos."
+      onSubmit={handleSubmit}
+    >
+      <div className="w-[500px]">
+        <div className="mx-6">
+          <InputField
+            label="Nome"
             type="text"
-            placeholder="Nome"
-            autoComplete="name"
             onChange={(e) => setName(e.target.value)}
             value={name}
+            autoComplete="name"
           />
-          <input
-            className="bg-gray-600 indent-1 rounded-sm"
+          <InputField
+            label="E-mail"
             type="email"
-            placeholder="E-mail"
-            autoComplete="email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            autoComplete="email"
           />
-          <input
-            className="bg-gray-600 indent-1 rounded-sm"
+          <InputField
+            label="Senha"
             type="password"
-            placeholder="Senha"
-            autoComplete="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            autoComplete="current-password"
           />
-          <input
-            className="bg-gray-600 indent-1 rounded-sm"
+          <InputField
+            label="Confirme a senha"
             type="password"
-            placeholder="Confirme a senha"
-            autoComplete="conf-password"
             onChange={(e) => setConfirmPassword(e.target.value)}
             value={confirmPassword}
+            autoComplete="new-password"
           />
           <AppButton
             label={!loading ? "Cadastrar" : "Aguarde..."}
-            buttonType={!loading ? "default" : "loading"}
+            buttonTypeStyle={!loading ? "default" : "loading"}
           />
-          {error && <Message msg={error} typeMessage="error" />}
-        </form>
-        <hr className="border-gray-600 m-4 mx-0 text-center w-full" />
 
-        <p className="text-center font-semibold">
-          Já possui uma conta?{" "}
-          <a className="text-blue-400 font-bold" href="/login">
-            Clique aqui
-          </a>
-        </p>
+          <hr className="border-gray-600  text-center w-full" />
+          <p className="text-center font-semibold my-4">
+            Já possui uma conta?{" "}
+            <Link
+              className="text-indigo-600  hover:text-indigo-800 font-bold"
+              to="/login"
+            >
+              Clique aqui
+            </Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </FormLayout>
   );
 };
 

@@ -1,23 +1,17 @@
+import type { LoginFormData, RegisterFormData } from "../types/auth";
 import { api, requestConfig } from "../utils/config";
 
-type Data = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-type LoginData = {
-  email: string;
-  password: string;
-};
-
-const register = async (data: Data) => {
+const register = async (data: RegisterFormData) => {
   const config: RequestInit = requestConfig("POST", data);
 
   try {
     const response = await fetch(api + "/users/register", config);
-
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
     const res = await response.json();
     if (res) {
       localStorage.setItem("user", JSON.stringify(res));
@@ -28,11 +22,17 @@ const register = async (data: Data) => {
   }
 };
 
-const login = async (data: LoginData) => {
+const login = async (data: LoginFormData) => {
   const config = requestConfig("POST", data);
 
   try {
     const response = await fetch(api + "/users/login", config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
 
     const res = await response.json();
 

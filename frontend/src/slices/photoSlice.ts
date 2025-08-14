@@ -1,61 +1,33 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import photoService from "../services/photoService";
 import type { RootState } from "../store";
-
-type Photo = {
-  title: string;
-  image: string;
-  _id: string;
-  [key: string]: any;
-};
-type InitialState = {
-  photos: Photo[] | undefined;
-  photo: Photo | null;
-  error: string | null;
-  success: boolean;
-  loading: boolean;
-  message: string;
-};
-type DeletedPhoto = {
-  id: string;
-  message: string;
-};
-
-type UpdatePhotoData = {
-  _id: string;
-  title: string;
-};
-type UpdatePhotoPayload = {
-  _id: string;
-  title: string;
-  [key: string]: any;
-};
-
-const initialState: InitialState = {
-  photos: [],
-  photo: null,
-  error: null,
-  success: false,
-  loading: false,
-  message: "",
-};
+import type {
+  DeletePhotoResponse,
+  LikePhotoResponse,
+  Photo,
+  PhotoCommentParams,
+  PhotoCommentResponse,
+  PhotoState,
+  PublishPhotoFormData,
+  UpdatePhotoParams,
+  UpdatePhotoResponse,
+} from "../types/photo";
 
 export const publishPhoto = createAsyncThunk<
   Photo,
-  Photo,
+  PublishPhotoFormData,
   { state: RootState; rejectValue: string }
->("photo/publish", async (photo, thunkAPI) => {
+>("photo/publish", async (photoData, thunkAPI) => {
   const token = thunkAPI.getState().auth.user?.token;
 
   if (!token) {
     return thunkAPI.rejectWithValue("Token não encontrado");
   }
-  const data = await photoService.publishPhoto(photo, token);
+  const data = await photoService.publishPhoto(photoData, token);
 
   if (data.errors) {
     return thunkAPI.rejectWithValue(data.errors[0]);
   }
-  console.log(data);
   return data;
 });
 
@@ -77,7 +49,7 @@ export const getUserPhotos = createAsyncThunk<
 });
 
 export const deletePhoto = createAsyncThunk<
-  DeletedPhoto,
+  DeletePhotoResponse,
   string,
   { state: RootState; rejectValue: string }
 >("photo/delete", async (photoId, thunkAPI) => {
@@ -94,8 +66,8 @@ export const deletePhoto = createAsyncThunk<
 });
 
 export const updatePhoto = createAsyncThunk<
-  UpdatePhotoPayload,
-  UpdatePhotoData,
+  UpdatePhotoResponse,
+  UpdatePhotoParams,
   { state: RootState; rejectValue: string }
 >("photo/update", async (photoData, thunkAPI) => {
   const token = thunkAPI.getState().auth.user?.token;
@@ -111,16 +83,111 @@ export const updatePhoto = createAsyncThunk<
   if (data.errors) {
     return thunkAPI.rejectWithValue(data.errors[0]);
   }
+  return data;
+});
+
+export const getPhotoById = createAsyncThunk<
+  Photo,
+  string,
+  { state: RootState; rejectValue: string }
+>("photo/getPhoto", async (photoId, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user?.token;
+  if (!token) {
+    return thunkAPI.rejectWithValue("Token não encontrado");
+  }
+  const data = await photoService.getPhotoById(photoId, token);
+
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+  return data;
+});
+
+export const like = createAsyncThunk<
+  LikePhotoResponse,
+  string,
+  { state: RootState; rejectValue: string }
+>("photo/like", async (photoId, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user?.token;
+  if (!token) {
+    return thunkAPI.rejectWithValue("Token não encontrado");
+  }
+  const data = await photoService.like(photoId, token);
+
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
 
   return data;
 });
 
+export const photoComment = createAsyncThunk<
+  PhotoCommentResponse,
+  PhotoCommentParams,
+  { state: RootState; rejectValue: string }
+>("photo/comment", async (photoData, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user?.token;
+  if (!token) {
+    return thunkAPI.rejectWithValue("Token não encontrado");
+  }
+  const data = await photoService.photoComment(
+    { comment: photoData.comment },
+    photoData._id!,
+    token
+  );
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+
+  return data;
+});
+export const getAllPhotos = createAsyncThunk<
+  Photo[],
+  void,
+  { state: RootState; rejectValue: string }
+>("photo/getAllPhotos", async (_NEVER, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user?.token;
+  if (!token) {
+    return thunkAPI.rejectWithValue("Token não encontrado");
+  }
+  const data = await photoService.getAllPhotos(token);
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+  return data;
+});
+
+export const searchPhotos = createAsyncThunk<
+  Photo[],
+  string,
+  { state: RootState; rejectValue: string }
+>("photo/search", async (query, thunkAPI) => {
+  const token = thunkAPI.getState().auth.user?.token;
+  if (!token) {
+    return thunkAPI.rejectWithValue("Token não encontrado");
+  }
+  const data = await photoService.searchPhotos(query, token);
+  if (data.errors) {
+    return thunkAPI.rejectWithValue(data.errors[0]);
+  }
+  return data;
+});
+
+const initialState: PhotoState = {
+  photos: [],
+  photo: null,
+  error: null,
+  success: false,
+  loading: false,
+  message: null,
+};
 export const photoSlice = createSlice({
   name: "photo",
   initialState,
   reducers: {
     resetMessage: (state) => {
-      state.message = "";
+      state.message = null;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -164,7 +231,6 @@ export const photoSlice = createSlice({
       .addCase(deletePhoto.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.error = null;
         state.photos = state.photos?.filter((photo) => {
           return photo._id !== action.payload.id;
         });
@@ -184,17 +250,88 @@ export const photoSlice = createSlice({
         state.success = true;
         state.error = null;
         state.message = action.payload.message;
-        state.photos?.map((photo) => {
-          if (photo.id === action.payload._id) {
-            return (photo.title = action.payload.photo.title);
-          }
-          return photo;
-        });
+        if (state.photo && state.photo._id === action.payload.photo._id) {
+          state.photo.title = action.payload.photo.title;
+        }
       })
       .addCase(updatePhoto.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Erro desconhecido";
+      })
+      .addCase(getPhotoById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPhotoById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.photo = action.payload;
+      })
+      .addCase(getPhotoById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Erro desconhecido";
         state.photo = null;
+      })
+      .addCase(like.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.message = action.payload.message;
+        if (state.photo?.likes) {
+          state.photo.likes.push({ userId: action.payload.userId });
+        }
+        state.photos = state.photos?.map((photo) =>
+          photo._id === action.payload.photoId
+            ? {
+                ...photo,
+                likes: [...photo.likes, { userId: action.payload.userId }],
+              }
+            : photo
+        );
+      })
+      .addCase(like.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Erro desconhecido";
+      })
+      .addCase(photoComment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.photo?.comments.push(action.payload.comment);
+        state.message = action.payload.message;
+      })
+      .addCase(photoComment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Erro desconhecido";
+      })
+      .addCase(getAllPhotos.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllPhotos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.photos = action.payload;
+      })
+      .addCase(getAllPhotos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Erro desconhecido";
+      })
+      .addCase(searchPhotos.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchPhotos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.photos = action.payload;
+      })
+      .addCase(searchPhotos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Erro desconhecido";
       });
   },
 });

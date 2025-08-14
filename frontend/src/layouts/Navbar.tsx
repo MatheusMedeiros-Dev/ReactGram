@@ -6,12 +6,14 @@ import { IoMdHome, IoMdPerson } from "react-icons/io";
 import { logout, reset } from "../slices/authSlice";
 import { MdPhotoCamera } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
+import { useState, type FormEvent } from "react";
 
 const Navbar = () => {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const dispath = useAppDispatch();
+  const [query, setQuery] = useState("");
 
   const handleLogout = () => {
     dispath(logout());
@@ -19,18 +21,26 @@ const Navbar = () => {
 
     navigate("/login");
   };
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (query) {
+      return navigate(`/search?q=${query}`);
+    }
+  };
   return (
-    <nav className="flex justify-between bg-black text-white shadow-xl">
+    <nav className="flex fixed top-0 justify-between w-full bg-black text-white shadow-xl">
       <Link className="font-bold text-xl m-3" to="/">
         ReactGram
       </Link>
-      <form className="flex items-center">
+      <form className="flex items-center" onSubmit={handleSearch}>
         <div className="flex items-center bg-gray-400 rounded-md p-1">
           <BsSearch />
           <input
             className="bg-gray-400 outline-none placeholder-white ml-2"
             type="text"
             placeholder="Pesquisar"
+            onChange={(e) => setQuery(e.target.value)}
           />
         </div>
       </form>

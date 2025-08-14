@@ -1,12 +1,5 @@
+import type { UpdateProfileFormData } from "../types/user";
 import { api, requestConfig } from "../utils/config";
-
-type UpdateProfileData = {
-  name?: string;
-  email?: string;
-  profileImage?: string;
-  bio?: string;
-  password?: string;
-};
 
 const profile = async (token: string) => {
   const config = requestConfig("GET", null, token);
@@ -15,7 +8,10 @@ const profile = async (token: string) => {
     const response = await fetch(api + "/users/profile", config);
 
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
     }
     const res = await response.json();
     return res;
@@ -24,13 +20,16 @@ const profile = async (token: string) => {
   }
 };
 
-const updateProfile = async (data: UpdateProfileData, token: string) => {
+const updateProfile = async (data: UpdateProfileFormData, token: string) => {
   const config = requestConfig("PUT", data, token, true);
 
   try {
     const response = await fetch(api + "/users/", config);
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
     }
     const res = await response.json();
     return res;
@@ -44,6 +43,12 @@ const getUserById = async (id: string) => {
 
   try {
     const response = await fetch(api + "/users/" + id, config);
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        errors: [errorData.message || "Erro ao processar requisição"],
+      };
+    }
     const res = await response.json();
     return res;
   } catch (error) {

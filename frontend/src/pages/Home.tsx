@@ -1,200 +1,38 @@
+import { useEffect } from "react";
+import { useResetMessage } from "../hooks/useResetMessage";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedRedux";
+import { getAllPhotos, like } from "../slices/photoSlice";
+import type { Photo } from "../types/photo";
+import PhotoList from "../components/PhotoList";
+
 const Home = () => {
+  const dispatch = useAppDispatch();
+
+  const { resetMessage } = useResetMessage("photo");
+
+  const { user: authUser } = useAppSelector((state) => state.auth);
+  const { photos } = useAppSelector((state) => state.photo);
+
+  const handleLike = (photo: Photo) => {
+    dispatch(like(photo._id));
+    resetMessage();
+  };
+
+  useEffect(() => {
+    dispatch(getAllPhotos());
+  }, [dispatch]);
+
   return (
-    <div>
-      <p>Home</p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-        perspiciatis numquam at cumque non, pariatur laborum deserunt et id
-        error, voluptates sit consequatur esse? Enim aliquam natus sint quos
-        beatae.
-      </p>
-    </div>
+    <>
+      {photos && authUser && (
+        <PhotoList
+          photos={photos}
+          authUser={authUser}
+          handleLike={handleLike}
+          homePage={true}
+        />
+      )}
+    </>
   );
 };
 
